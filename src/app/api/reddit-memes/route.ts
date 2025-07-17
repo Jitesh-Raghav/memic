@@ -88,7 +88,7 @@ function getMediaType(url: string): 'image' | 'video' {
   return (hasVideoExt || isVideoHost) ? 'video' : 'image';
 }
 
-function categorizeRedditMeme(title: string, _subreddit: string): string {
+function categorizeRedditMeme(title: string): string {
   const lowerTitle = title.toLowerCase();
   
   // Category mapping based on title keywords
@@ -220,7 +220,7 @@ export async function GET() {
         id: `reddit-${post.id}`,
         name: post.title.length > 50 ? `${post.title.substring(0, 50)}...` : post.title,
         url: post.url,
-        category: categorizeRedditMeme(post.title, post.subreddit),
+                    category: categorizeRedditMeme(post.title),
         popularity: Math.max(10, 100 - Math.floor(index / 2)), // Popularity based on ranking
         tags: generateTags(post.title, post.subreddit),
         source: 'reddit' as const,
