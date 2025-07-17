@@ -47,9 +47,7 @@ let redditCacheTimestamp = 0;
 const REDDIT_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
 // Validated templates cache
-let validatedTemplatesCache: Set<string> = new Set();
-let validatedCacheTimestamp = 0;
-const VALIDATION_CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+const validatedTemplatesCache: Set<string> = new Set();
 
 // Additional meme template sources
 const ADDITIONAL_MEME_SOURCES = [
@@ -370,7 +368,7 @@ async function fetchRedditTemplates(): Promise<MemeTemplate[]> {
     }
 
     // Convert Reddit templates to our format
-    const redditTemplates: MemeTemplate[] = data.templates.map((template: any) => ({
+    const redditTemplates: MemeTemplate[] = data.templates.map((template: { id: string; name: string; url: string; category: string; popularity: number; tags: string[]; subreddit: string; upvotes: number; author: string; permalink: string }) => ({
       id: template.id,
       name: template.name,
       url: template.url,

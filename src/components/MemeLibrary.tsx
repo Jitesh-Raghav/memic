@@ -18,7 +18,7 @@ const MemeLibrary: React.FC<MemeLibraryProps> = ({ onSelectMeme, isOpen, onClose
   const [loading, setLoading] = useState(true);
   const [loadingStage, setLoadingStage] = useState<string>('');
   const [loadingProgress, setLoadingProgress] = useState<number>(0);
-  const [selectedElement, setSelectedElement] = useState<string | null>(null);
+
   const [activeTab, setActiveTab] = useState<'templates' | 'custom'>('templates');
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -130,6 +130,7 @@ const MemeLibrary: React.FC<MemeLibraryProps> = ({ onSelectMeme, isOpen, onClose
         {/* Header */}
         <div className="p-4 sm:p-6 border-b border-gray-800 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center space-x-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/memix.ico" 
               alt="Memic Logo" 
@@ -308,6 +309,7 @@ const MemeLibrary: React.FC<MemeLibraryProps> = ({ onSelectMeme, isOpen, onClose
                               </div>
                             ) : (
                               <>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                   src={meme.url}
                                   alt={meme.name}

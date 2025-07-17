@@ -146,7 +146,7 @@ async function fetchFromSubreddit(subreddit: string, timeframe: string = 'month'
     }
 
     return data.data.children
-      .map((post: any) => ({
+      .map((post: { data: { title: string; url: string; thumbnail: string; ups: number; id: string; author: string; created_utc: number; permalink: string; subreddit: string } }) => ({
         title: post.data.title,
         url: post.data.url,
         thumbnail: post.data.thumbnail,

@@ -50,7 +50,7 @@ export default function EditorPage() {
               const template = JSON.parse(savedTemplate);
               setSelectedTemplate(template);
               localStorage.removeItem('selectedTemplate');
-            } catch (e) {
+            } catch {
               console.error('Failed to parse saved template');
             }
           } else {
@@ -185,6 +185,7 @@ export default function EditorPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Link href="/" className="flex items-center space-x-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src="/memix.ico" 
                     alt="Memic Logo" 
@@ -228,6 +229,7 @@ export default function EditorPage() {
                 className="cursor-pointer bg-gray-900 border border-gray-800 rounded hover:border-gray-600 transition-all duration-300 overflow-hidden hover:scale-105"
               >
                 <div className="aspect-square overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={meme.url}
                     alt={meme.name}

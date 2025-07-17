@@ -54,6 +54,7 @@ const ComicPanel: React.FC<ComicPanelProps> = ({
     >
       {/* Background Image */}
       {panel.image ? (
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
           src={panel.image} 
           alt="Panel background" 

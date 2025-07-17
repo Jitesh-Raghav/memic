@@ -44,6 +44,7 @@ export default function Home() {
               animationDuration: `${12 + index * 2}s`,
             }}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={template}
               alt=""
@@ -61,6 +62,7 @@ export default function Home() {
         {/* Logo and Brand Name */}
         <div className={`mb-6 transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="flex items-center justify-center mb-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/mm.jpg" 
               alt="Memic Logo" 

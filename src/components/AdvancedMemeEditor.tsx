@@ -55,7 +55,6 @@ const TEXT_EFFECTS = [
 
 const AdvancedMemeEditor: React.FC<AdvancedMemeEditorProps> = ({ template, onExport }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
@@ -782,7 +781,7 @@ const AdvancedMemeEditor: React.FC<AdvancedMemeEditorProps> = ({ template, onExp
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {textElements
                   .sort((a, b) => b.zIndex - a.zIndex)
-                  .map((element, index) => (
+                  .map((element) => (
                     <div
                       key={element.id}
                       className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
@@ -937,7 +936,7 @@ const AdvancedMemeEditor: React.FC<AdvancedMemeEditorProps> = ({ template, onExp
                       <label className="block text-sm text-gray-400 mb-2">Weight</label>
                       <select
                         value={selectedTextElement.fontWeight}
-                        onChange={(e) => updateTextElement(selectedTextElement.id, { fontWeight: e.target.value as any })}
+                        onChange={(e) => updateTextElement(selectedTextElement.id, { fontWeight: e.target.value as 'normal' | 'bold' | '100' | '300' | '400' | '500' | '600' | '700' | '800' | '900' })}
                         className="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-white"
                       >
                         <option value="normal">Normal</option>

@@ -9,7 +9,7 @@ interface ComicGridProps {
   panels: Panel[];
   onImageUpload: (panelId: string, file: File) => void;
   onAddTextBubble: (panelId: string, type: 'speech' | 'thought') => void;
-  onUpdateTextBubble: (panelId: string, bubbleId: string, updates: Partial<any>) => void;
+  onUpdateTextBubble: (panelId: string, bubbleId: string, updates: Partial<{ text: string; x: number; y: number; type: string }>) => void;
   onDeleteTextBubble: (panelId: string, bubbleId: string) => void;
   onSelectMemeFromLibrary: (panelId: string, url: string) => void;
 }
