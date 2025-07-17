@@ -28,7 +28,7 @@ export interface RedditMemeTemplate {
   thumbnail?: string;
 }
 
-// List of meme template subreddits to fetch from
+// List of meme template subreddits to fetch from (reduced for rate limiting)
 const MEME_SUBREDDITS = [
   'MemeTemplatesOfficial',
   'memetemplates', 
@@ -36,15 +36,8 @@ const MEME_SUBREDDITS = [
   'blanktemplate',
   'TemplateMemes',
   'dankmemes',
-  'memes',
-  'wholesomememes',
-  'PrequelMemes',
-  'HistoryMemes',
-  'ProgrammerHumor',
-  'ReactionMemes',
-  'AdviceAnimals',
-  'MemeEconomy',
-  'InsiderMemeTrading'
+  'memes'
+  // Reduced from 15 to 7 subreddits to avoid Reddit rate limits in production
 ];
 
 // Cache for Reddit API responses
@@ -123,29 +116,36 @@ function generateTags(title: string, subreddit: string): string[] {
 
 async function fetchFromSubreddit(subreddit: string, timeframe: string = 'month'): Promise<RedditPost[]> {
   try {
-    const url = `https://www.reddit.com/r/${subreddit}/top.json?limit=100&t=${timeframe}`;
-    console.log(`Fetching from: ${url}`);
+    const url = `https://www.reddit.com/r/${subreddit}/top.json?limit=50&t=${timeframe}`;
+    console.log(`🔍 Fetching from: r/${subreddit} (${timeframe})`);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
     const response = await fetch(url, {
+      signal: controller.signal,
       headers: {
-        'User-Agent': 'Memic-App/1.0 (Meme Template Fetcher)',
+        'User-Agent': 'Memic-App/1.0 (Template Fetcher)',
         'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
       },
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      console.warn(`Failed to fetch from r/${subreddit}: ${response.status}`);
+      console.warn(`❌ Failed to fetch from r/${subreddit}: HTTP ${response.status} - ${response.statusText}`);
       return [];
     }
 
     const data = await response.json();
     
     if (!data.data?.children) {
-      console.warn(`No data found for r/${subreddit}`);
+      console.warn(`⚠️ No data found for r/${subreddit}`);
       return [];
     }
 
-    return data.data.children
+    const posts = data.data.children
       .map((post: { data: { title: string; url: string; thumbnail: string; ups: number; id: string; author: string; created_utc: number; permalink: string; subreddit: string } }) => ({
         title: post.data.title,
         url: post.data.url,
@@ -157,39 +157,51 @@ async function fetchFromSubreddit(subreddit: string, timeframe: string = 'month'
         permalink: post.data.permalink,
         subreddit: post.data.subreddit,
       }))
-      .filter((post: RedditPost) => isImageUrl(post.url) && post.upvotes > 5); // Lower threshold for more content
+      .filter((post: RedditPost) => isImageUrl(post.url) && post.upvotes > 10); // Slightly higher threshold for quality
+
+    console.log(`✅ Found ${posts.length} valid templates from r/${subreddit} (${timeframe})`);
+    return posts;
 
   } catch (error) {
-    console.error(`Error fetching from r/${subreddit}:`, error);
+    console.error(`❌ Error fetching from r/${subreddit} (${timeframe}):`, error);
     return [];
   }
 }
 
 export async function GET() {
+  const startTime = Date.now();
+  
   try {
     // Check cache first
     if (redditCache.length > 0 && Date.now() - lastFetch < CACHE_DURATION) {
-      console.log(`Returning ${redditCache.length} cached Reddit templates`);
+      console.log(`📦 Returning ${redditCache.length} cached Reddit templates`);
       return NextResponse.json({
         success: true,
         templates: redditCache,
         cached: true,
-        count: redditCache.length
+        count: redditCache.length,
+        fetchTime: 0
       });
     }
 
-    console.log('Fetching fresh Reddit meme templates...');
+    console.log('🔄 Fetching fresh Reddit meme templates...');
+    console.log(`📊 Will fetch from ${MEME_SUBREDDITS.length} subreddits with reduced timeframes`);
     const allPosts: RedditPost[] = [];
 
-    // Fetch from multiple subreddits and time periods in parallel
-    const timeframes = ['week', 'month', 'year'];
+    // Fetch from multiple subreddits and time periods with rate limiting
+    const timeframes = ['month', 'week']; // Reduced timeframes to avoid rate limits
     const fetchPromises: Promise<RedditPost[]>[] = [];
     
-    MEME_SUBREDDITS.forEach(subreddit => {
-      timeframes.forEach(timeframe => {
+    // Sequential fetching to avoid overwhelming Reddit API
+    for (const subreddit of MEME_SUBREDDITS) {
+      for (const timeframe of timeframes) {
         fetchPromises.push(fetchFromSubreddit(subreddit, timeframe));
-      });
-    });
+        // Small delay between requests to avoid rate limiting
+        if (fetchPromises.length < MEME_SUBREDDITS.length * timeframes.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+    }
 
     const results = await Promise.allSettled(fetchPromises);
     
@@ -215,7 +227,7 @@ export async function GET() {
     // Convert to our template format
     const templates: RedditMemeTemplate[] = uniquePosts
       .sort((a, b) => b.upvotes - a.upvotes) // Sort by popularity
-      .slice(0, 200) // Increased limit to 200
+      .slice(0, 150) // Reduced to 150 for better performance
       .map((post, index) => ({
         id: `reddit-${post.id}`,
         name: post.title.length > 50 ? `${post.title.substring(0, 50)}...` : post.title,
@@ -236,7 +248,15 @@ export async function GET() {
     redditCache = templates;
     lastFetch = Date.now();
 
-    console.log(`🎭 Successfully fetched ${templates.length} unique Reddit meme templates`);
+    const fetchTime = Date.now() - startTime;
+    console.log(`🎭 Successfully fetched ${templates.length} unique Reddit meme templates in ${fetchTime}ms`);
+    
+    // Log breakdown by subreddit
+    const subredditBreakdown = MEME_SUBREDDITS.map(sub => ({
+      subreddit: sub,
+      count: templates.filter(t => t.subreddit === sub).length
+    }));
+    console.log('📊 Templates by subreddit:', subredditBreakdown);
 
     return NextResponse.json({
       success: true,
@@ -244,28 +264,42 @@ export async function GET() {
       cached: false,
       count: templates.length,
       subreddits: MEME_SUBREDDITS,
-      fetchedAt: new Date().toISOString()
+      fetchedAt: new Date().toISOString(),
+      fetchTime,
+      breakdown: subredditBreakdown
     });
 
   } catch (error) {
-    console.error('Error in Reddit memes API:', error);
+    const fetchTime = Date.now() - startTime;
+    console.error('❌ Error in Reddit memes API:', error);
+    console.error('🔍 Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      fetchTime,
+      subreddits: MEME_SUBREDDITS,
+      cacheSize: redditCache.length
+    });
     
     // Return cached data if available, even if stale
     if (redditCache.length > 0) {
+      console.log(`📦 Returning ${redditCache.length} stale cached templates due to error`);
       return NextResponse.json({
         success: true,
         templates: redditCache,
         cached: true,
         count: redditCache.length,
-        error: 'Using cached data due to API error'
+        error: 'Using cached data due to API error',
+        fetchTime
       });
     }
 
+    console.log('🆘 No cache available, returning empty result');
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch Reddit meme templates',
+      error: error instanceof Error ? error.message : 'Failed to fetch Reddit meme templates',
       templates: [],
-      count: 0
+      count: 0,
+      fetchTime
     }, { status: 500 });
   }
 } 

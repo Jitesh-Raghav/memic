@@ -461,10 +461,18 @@ export async function fetchImgflipMemes(): Promise<MemeTemplate[]> {
 
   try {
     // Fetch all template sources in parallel
+    console.log('🔄 Fetching template sources in parallel...');
     const [additionalTemplates, redditTemplates] = await Promise.all([
       fetchAdditionalTemplates(),
       fetchRedditTemplates()
     ]);
+    
+    console.log(`📊 Template sources loaded:`, {
+      imgflip: imgflipTemplates.length,
+      additional: additionalTemplates.length,
+      reddit: redditTemplates.length,
+      curated: ADDITIONAL_MEME_SOURCES.length
+    });
 
     // Add curated template sources
     const curatedTemplates = ADDITIONAL_MEME_SOURCES.map(source => ({
@@ -521,6 +529,17 @@ export async function fetchImgflipMemes(): Promise<MemeTemplate[]> {
     
     console.log(`🎭 Template Library Stats:`, stats);
     console.log(`📊 Total: ${stats.total} | Imgflip: ${stats.imgflip} | Reddit: ${stats.reddit} | Custom: ${stats.custom} | Categories: ${stats.categories}`);
+    
+    // If we have very few templates, log a warning
+    if (sortedTemplates.length < 50) {
+      console.warn(`⚠️ WARNING: Only ${sortedTemplates.length} templates loaded. This may indicate API failures.`);
+      console.warn(`🔍 Debug info:`, {
+        imgflipWorking: imgflipTemplates.length > 0,
+        redditWorking: redditTemplates.length > 0,
+        additionalTemplates: additionalTemplates.length,
+        fallbackMode: !useImgflipAPI
+      });
+    }
     
     return sortedTemplates;
     
@@ -714,6 +733,7 @@ async function fetchAdditionalTemplates(): Promise<MemeTemplate[]> {
     { id: 'online-shopping', name: 'Online Shopping Addiction', url: 'https://i.imgflip.com/1h7in3.jpg', category: 'lifestyle', popularity: 73, tags: ['online', 'shopping', 'addiction', 'amazon'] }
   ];
 
+  console.log(`📋 fetchAdditionalTemplates loaded ${templates.length} hardcoded templates`);
   return templates;
 }
 
@@ -879,6 +899,335 @@ export function getFallbackMemes(): MemeTemplate[] {
       category: 'reaction',
       popularity: 81,
       tags: ['disaster', 'girl', 'fire']
+    },
+    // ADDITIONAL RELIABLE FALLBACK TEMPLATES FOR PRODUCTION
+    {
+      id: 'mocking-spongebob-fallback',
+      name: 'Mocking SpongeBob',
+      url: 'https://i.imgflip.com/1otk96.jpg',
+      category: 'reaction',
+      popularity: 80,
+      tags: ['spongebob', 'mocking', 'alternating']
+    },
+    {
+      id: 'bernie-sanders-fallback',
+      name: 'Bernie Sanders',
+      url: 'https://i.imgflip.com/4x6h.jpg',
+      category: 'politics',
+      popularity: 79,
+      tags: ['bernie', 'sanders', 'mittens']
+    },
+    {
+      id: 'roll-safe-fallback',
+      name: 'Roll Safe Think About It',
+      url: 'https://i.imgflip.com/1h7in3.jpg',
+      category: 'smart',
+      popularity: 78,
+      tags: ['roll', 'safe', 'think', 'smart']
+    },
+    {
+      id: 'left-exit-12-fallback',
+      name: 'Left Exit 12 Off Ramp',
+      url: 'https://i.imgflip.com/22bdq6.jpg',
+      category: 'choice',
+      popularity: 77,
+      tags: ['exit', 'ramp', 'choice', 'car']
+    },
+    {
+      id: 'always-has-been-fallback',
+      name: 'Always Has Been',
+      url: 'https://i.imgflip.com/46e43q.jpg',
+      category: 'space',
+      popularity: 76,
+      tags: ['astronaut', 'space', 'always', 'gun']
+    },
+    {
+      id: 'flex-tape-fallback',
+      name: 'Flex Tape',
+      url: 'https://i.imgflip.com/3odu33.jpg',
+      category: 'repair',
+      popularity: 75,
+      tags: ['flex', 'tape', 'phil', 'swift']
+    },
+    {
+      id: 'uno-draw-25-fallback',
+      name: 'UNO Draw 25 Cards',
+      url: 'https://i.imgflip.com/4acd7j.jpg',
+      category: 'choice',
+      popularity: 74,
+      tags: ['uno', 'draw', 'cards', 'choice']
+    },
+    {
+      id: 'trade-offer-fallback',
+      name: 'Trade Offer',
+      url: 'https://i.imgflip.com/54hjww.jpg',
+      category: 'trade',
+      popularity: 73,
+      tags: ['trade', 'offer', 'hands', 'deal']
+    },
+    {
+      id: 'giga-chad-fallback',
+      name: 'Giga Chad',
+      url: 'https://i.imgflip.com/61kujv.jpg',
+      category: 'chad',
+      popularity: 72,
+      tags: ['giga', 'chad', 'alpha', 'strong']
+    },
+    {
+      id: 'among-us-fallback',
+      name: 'Among Us',
+      url: 'https://i.imgflip.com/5c7lwq.jpg',
+      category: 'gaming',
+      popularity: 71,
+      tags: ['among', 'us', 'sus', 'impostor']
+    },
+    {
+      id: 'woman-pointing-fallback',
+      name: 'Woman Pointing at Cat',
+      url: 'https://i.imgflip.com/345v97.jpg',
+      category: 'reaction',
+      popularity: 70,
+      tags: ['woman', 'pointing', 'cat', 'table']
+    },
+    {
+      id: 'epic-handshake-fallback',
+      name: 'Epic Handshake',
+      url: 'https://i.imgflip.com/28j0te.jpg',
+      category: 'agreement',
+      popularity: 69,
+      tags: ['handshake', 'epic', 'agreement', 'muscles']
+    },
+    {
+      id: 'brain-size-fallback',
+      name: 'Increasing Brain Size',
+      url: 'https://i.imgflip.com/1jwhww.jpg',
+      category: 'smart',
+      popularity: 68,
+      tags: ['brain', 'size', 'increasing', 'levels']
+    },
+    {
+      id: 'big-brain-fallback',
+      name: 'Big Brain',
+      url: 'https://i.imgflip.com/3eq8j4.jpg',
+      category: 'smart',
+      popularity: 67,
+      tags: ['big', 'brain', 'smart', 'genius']
+    },
+    {
+      id: 'sad-pablo-fallback',
+      name: 'Sad Pablo Escobar',
+      url: 'https://i.imgflip.com/2x2zn7.jpg',
+      category: 'sad',
+      popularity: 66,
+      tags: ['pablo', 'escobar', 'sad', 'alone']
+    },
+    {
+      id: 'disapproving-obama-fallback',
+      name: 'Disapproving Obama',
+      url: 'https://i.imgflip.com/24xxy5.jpg',
+      category: 'disapproval',
+      popularity: 65,
+      tags: ['obama', 'disapproving', 'no', 'head-shake']
+    },
+    {
+      id: 'evil-kermit-fallback',
+      name: 'Evil Kermit',
+      url: 'https://i.imgflip.com/1e7ql7.jpg',
+      category: 'internal',
+      popularity: 64,
+      tags: ['kermit', 'evil', 'temptation', 'dark-side']
+    },
+    {
+      id: 'first-time-fallback',
+      name: 'First Time?',
+      url: 'https://i.imgflip.com/2fm6x.jpg',
+      category: 'experienced',
+      popularity: 63,
+      tags: ['first', 'time', 'experienced', 'hanging']
+    },
+    {
+      id: 'thats-bait-fallback',
+      name: 'That\'s Bait',
+      url: 'https://i.imgflip.com/1nhqil.jpg',
+      category: 'bait',
+      popularity: 62,
+      tags: ['bait', 'trap', 'obvious', 'fishing']
+    },
+    {
+      id: 'unsettled-tom-fallback',
+      name: 'Unsettled Tom',
+      url: 'https://i.imgflip.com/2wifvo.jpg',
+      category: 'concerned',
+      popularity: 61,
+      tags: ['tom', 'unsettled', 'concerned', 'cat']
+    },
+    {
+      id: 'awkward-monkey-fallback',
+      name: 'Awkward Look Monkey',
+      url: 'https://i.imgflip.com/3oevdk.jpg',
+      category: 'awkward',
+      popularity: 60,
+      tags: ['monkey', 'awkward', 'look', 'puppet']
+    },
+    {
+      id: 'lisa-simpson-fallback',
+      name: 'Lisa Simpson Presentation',
+      url: 'https://i.imgflip.com/9ehk.jpg',
+      category: 'presentation',
+      popularity: 59,
+      tags: ['lisa', 'simpson', 'presentation', 'chart']
+    },
+    {
+      id: 'clown-makeup-fallback',
+      name: 'Clown Applying Makeup',
+      url: 'https://i.imgflip.com/38el31.jpg',
+      category: 'progression',
+      popularity: 58,
+      tags: ['clown', 'makeup', 'progression', 'steps']
+    },
+    {
+      id: 'waiting-skeleton-fallback',
+      name: 'Waiting Skeleton',
+      url: 'https://i.imgflip.com/2fm6x.jpg',
+      category: 'waiting',
+      popularity: 57,
+      tags: ['skeleton', 'waiting', 'bench', 'forever']
+    },
+    {
+      id: 'crying-cat-fallback',
+      name: 'Crying Cat',
+      url: 'https://i.imgflip.com/2d5ti9.jpg',
+      category: 'sad',
+      popularity: 56,
+      tags: ['cat', 'crying', 'sad', 'tears']
+    },
+    {
+      id: 'math-lady-fallback',
+      name: 'Math Lady/Confused Lady',
+      url: 'https://i.imgflip.com/1g8my4.jpg',
+      category: 'confused',
+      popularity: 55,
+      tags: ['math', 'lady', 'confused', 'equations']
+    },
+    {
+      id: 'spiderman-pointing-fallback',
+      name: 'Spider-Man Pointing',
+      url: 'https://i.imgflip.com/1ihzfe.jpg',
+      category: 'identical',
+      popularity: 54,
+      tags: ['spiderman', 'pointing', 'identical', 'same']
+    },
+    {
+      id: 'hard-to-swallow-fallback',
+      name: 'Hard To Swallow Pills',
+      url: 'https://i.imgflip.com/1vxw8h.jpg',
+      category: 'truth',
+      popularity: 53,
+      tags: ['pills', 'hard', 'swallow', 'truth']
+    },
+    {
+      id: 'x-everywhere-fallback',
+      name: 'X, X Everywhere',
+      url: 'https://i.imgflip.com/1ihzfe.jpg',
+      category: 'everywhere',
+      popularity: 52,
+      tags: ['buzz', 'lightyear', 'everywhere', 'toy-story']
+    },
+    {
+      id: 'both-fallback',
+      name: 'Why Not Both?',
+      url: 'https://i.imgflip.com/1g8my4.jpg',
+      category: 'both',
+      popularity: 51,
+      tags: ['both', 'why', 'not', 'girl']
+    },
+    {
+      id: 'fine-everything-fallback',
+      name: 'This Is Fine (Everything Is Fine)',
+      url: 'https://i.imgflip.com/26am.jpg',
+      category: 'denial',
+      popularity: 50,
+      tags: ['fine', 'everything', 'dog', 'fire']
+    },
+    {
+      id: 'boardroom-meeting-fallback',
+      name: 'Boardroom Meeting Suggestion',
+      url: 'https://i.imgflip.com/m78d.jpg',
+      category: 'meeting',
+      popularity: 49,
+      tags: ['boardroom', 'meeting', 'suggestion', 'thrown-out']
+    },
+    {
+      id: 'scroll-of-truth-fallback',
+      name: 'The Scroll Of Truth',
+      url: 'https://i.imgflip.com/21tqf4.jpg',
+      category: 'truth',
+      popularity: 48,
+      tags: ['scroll', 'truth', 'nyeh', 'reject']
+    },
+    {
+      id: 'car-salesman-fallback',
+      name: 'Car Salesman Slaps Roof',
+      url: 'https://i.imgflip.com/2d5ti9.jpg',
+      category: 'sales',
+      popularity: 47,
+      tags: ['car', 'salesman', 'slaps', 'roof']
+    },
+    {
+      id: 'is-this-fallback',
+      name: 'Is This A Pigeon?',
+      url: 'https://i.imgflip.com/1o00in.jpg',
+      category: 'misidentify',
+      popularity: 46,
+      tags: ['pigeon', 'butterfly', 'anime', 'is-this']
+    },
+    {
+      id: 'galaxy-brain-fallback',
+      name: 'Galaxy Brain',
+      url: 'https://i.imgflip.com/1jwhww.jpg',
+      category: 'intelligence',
+      popularity: 45,
+      tags: ['galaxy', 'brain', 'cosmic', 'smart']
+    },
+    {
+      id: 'hot-dog-fallback',
+      name: 'Hot Dog Girl',
+      url: 'https://i.imgflip.com/2v3a8h.jpg',
+      category: 'choices',
+      popularity: 44,
+      tags: ['hot', 'dog', 'girl', 'choices']
+    },
+    {
+      id: 'thinking-black-guy-fallback',
+      name: 'Thinking Black Guy',
+      url: 'https://i.imgflip.com/1h7in3.jpg',
+      category: 'thinking',
+      popularity: 43,
+      tags: ['thinking', 'black', 'guy', 'smart']
+    },
+    {
+      id: 'modern-problems-fallback',
+      name: 'Modern Problems Require Modern Solutions',
+      url: 'https://i.imgflip.com/21tqf4.jpg',
+      category: 'solutions',
+      popularity: 42,
+      tags: ['modern', 'problems', 'solutions', 'creative']
+    },
+    {
+      id: 'buff-doge-crying-fallback',
+      name: 'Buff Doge vs Crying Cheems',
+      url: 'https://i.imgflip.com/4acd7j.jpg',
+      category: 'comparison',
+      popularity: 41,
+      tags: ['buff', 'doge', 'crying', 'cheems']
+    },
+    {
+      id: 'woman-yelling-cat-table-fallback',
+      name: 'Woman Yelling at Cat at Dinner Table',
+      url: 'https://i.imgflip.com/345v97.jpg',
+      category: 'argument',
+      popularity: 40,
+      tags: ['woman', 'cat', 'table', 'dinner']
     }
   ];
 }
