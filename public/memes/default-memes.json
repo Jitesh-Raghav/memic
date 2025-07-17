@@ -1,0 +1,74 @@
+[
+  {
+    "id": "drake",
+    "name": "Drake Pointing",
+    "url": "https://i.imgflip.com/30b1gx.jpg",
+    "category": "reaction"
+  },
+  {
+    "id": "distracted-boyfriend",
+    "name": "Distracted Boyfriend",
+    "url": "https://i.imgflip.com/1ur9b0.jpg",
+    "category": "reaction"
+  },
+  {
+    "id": "woman-yelling-cat",
+    "name": "Woman Yelling at Cat",
+    "url": "https://i.imgflip.com/345v97.jpg",
+    "category": "reaction"
+  },
+  {
+    "id": "two-buttons",
+    "name": "Two Buttons",
+    "url": "https://i.imgflip.com/1g8my4.jpg",
+    "category": "choice"
+  },
+  {
+    "id": "expanding-brain",
+    "name": "Expanding Brain",
+    "url": "https://i.imgflip.com/1jwhww.jpg",
+    "category": "smart"
+  },
+  {
+    "id": "surprised-pikachu",
+    "name": "Surprised Pikachu",
+    "url": "https://i.imgflip.com/2kbn1e.jpg",
+    "category": "reaction"
+  },
+  {
+    "id": "this-is-fine",
+    "name": "This is Fine",
+    "url": "https://i.imgflip.com/26am.jpg",
+    "category": "reaction"
+  },
+  {
+    "id": "change-my-mind",
+    "name": "Change My Mind",
+    "url": "https://i.imgflip.com/24y43o.jpg",
+    "category": "opinion"
+  },
+  {
+    "id": "stonks",
+    "name": "Stonks",
+    "url": "https://i.imgflip.com/2d3al6.jpg",
+    "category": "business"
+  },
+  {
+    "id": "galaxy-brain",
+    "name": "Galaxy Brain",
+    "url": "https://i.imgflip.com/1jwhww.jpg",
+    "category": "smart"
+  },
+  {
+    "id": "pepe-frog",
+    "name": "Pepe the Frog",
+    "url": "https://i.imgflip.com/1bip.jpg",
+    "category": "reaction"
+  },
+  {
+    "id": "success-kid",
+    "name": "Success Kid",
+    "url": "https://i.imgflip.com/1bhk.jpg",
+    "category": "success"
+  }
+] 
