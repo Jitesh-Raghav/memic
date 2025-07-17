@@ -88,7 +88,7 @@ function getMediaType(url: string): 'image' | 'video' {
   return (hasVideoExt || isVideoHost) ? 'video' : 'image';
 }
 
-function categorizeRedditMeme(title: string, subreddit: string): string {
+function categorizeRedditMeme(title: string, _subreddit: string): string {
   const lowerTitle = title.toLowerCase();
   
   // Category mapping based on title keywords
